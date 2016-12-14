@@ -20,6 +20,9 @@ extern bool haveSound;
 //Astar Map
 extern vector<vector<int>> AstarMap;
 
+//Render List
+extern vector<vector<int>> renderList;
+
 //Origins and End Point
 extern int startPointX;
 extern int startPointY;
@@ -108,12 +111,54 @@ void AstarScene::menuCallback(Ref *sender)
 	{
 	case 0:
 	{
-		vector<vector<int>> FinalMatrix = Astar(startPointX, startPointY, endPointX, endPointY, AstarMap, SpritesMatrix);
+		vector<vector<int>> FinalMatrix = Astar(startPointX, startPointY, endPointX, endPointY, AstarMap);
 
 		//Final Matrix Tintage
 		for (auto &NodeOfRoad:FinalMatrix)
 		{
-			SpritesMatrix[13-NodeOfRoad[0]][NodeOfRoad[1]]->setColor(Color3B(0x00,0x00,0x00));
+			vector<int> temp(3,0);
+			temp[0] = NodeOfRoad[0];
+			temp[1] = NodeOfRoad[1];
+			temp[2] = 3;
+
+			renderList.push_back(temp);
+		}
+
+		double dt = 0.002;
+
+		for (auto &temp : renderList)
+		{
+			auto delT = DelayTime::create(dt);
+
+			Color3B C3B;
+			switch (temp[2])
+			{
+			case 1:
+			{
+				Color3B C3(0xFF,0x82,0xAB);
+				C3B = C3;
+			}
+			break;
+
+			case 2:
+			{
+				Color3B C3(0x8A, 0x2B, 0xE2);
+				C3B = C3;
+			}
+			break;
+
+			case 3:
+			{
+				Color3B C3(0x00, 0x00, 0x00);
+				C3B = C3;
+			}
+			break;
+			}
+
+			auto seq = Sequence::create(delT, TintTo::create(0.002, C3B),nullptr);
+			SpritesMatrix[13 - temp[0]][temp[1]]->runAction(seq);
+
+			dt += 0.002;
 		}
 	}
 	break;
@@ -122,6 +167,7 @@ void AstarScene::menuCallback(Ref *sender)
 	{
 		AstarMap.clear();
 		SpritesMatrix.clear();
+		renderList.clear();
 
 		startPointX = 0; startPointY = 0; endPointX = 0; endPointY = 0;
 
