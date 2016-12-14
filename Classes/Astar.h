@@ -3,9 +3,8 @@
 
 #include <cmath>
 #include <vector>
-#include "cocos2d.h"
 
-//Ò»¸ö±È½Ï»ù´¡µÄ½á¹¹Ìå£¬ÓÃÓÚºÍµØÍ¼Áª¶¯
+//ä¸€ä¸ªæ¯”è¾ƒåŸºç¡€çš„ç»“æ„ä½“ï¼Œç”¨äºå’Œåœ°å›¾è”åŠ¨
 struct baseNode
 {
 	int i=0;
@@ -20,44 +19,44 @@ struct baseNode
 };
 
 std::vector<std::vector<baseNode>> inputMap(int sizeX, int sizeY, const std::vector<std::vector<int>> &firstMap);
-std::vector<std::vector<int>> Astar(int startPointX, int startPointY, int endPointX, int endPointY, const std::vector<std::vector<int>> &firstMap, std::vector<std::vector<cocos2d::Sprite*>> &Mat);
+std::vector<std::vector<int>> Astar(int startPointX, int startPointY, int endPointX, int endPointY, const std::vector<std::vector<int>> &firstMap);
 
 void putInOpenList(baseNode &inList, std::vector<baseNode> &OpenList);
 
-//È¡³ö¿ªÆôÁĞ±í£¨×îĞ¡¶ş²æ¶Ñ£©ÖĞ×îĞ¡µÄÊı
+//å–å‡ºå¼€å¯åˆ—è¡¨ï¼ˆæœ€å°äºŒå‰å †ï¼‰ä¸­æœ€å°çš„æ•°
 baseNode readTopOpenList(std::vector<baseNode> &OpenList);
 
-//°ÑÒ»¸öÔªËØ¼ÓÈë¹Ø±ÕÁĞ±íÖĞ£¬Ê¹¹Ø±ÕÁĞ±íÓĞĞò
+//æŠŠä¸€ä¸ªå…ƒç´ åŠ å…¥å…³é—­åˆ—è¡¨ä¸­ï¼Œä½¿å…³é—­åˆ—è¡¨æœ‰åº
 void putInCloseList(baseNode &temp, std::vector<baseNode> &CloseList);
 
-//°Ñ¿ªÆôÁĞ±íÖĞµÄµ±Ç°½ÚµãÉ¾³ı£¬Ê¹Æä·ûºÏ×îĞ¡¶ş²æ¶ÑµÄĞÔÖÊ
+//æŠŠå¼€å¯åˆ—è¡¨ä¸­çš„å½“å‰èŠ‚ç‚¹åˆ é™¤ï¼Œä½¿å…¶ç¬¦åˆæœ€å°äºŒå‰å †çš„æ€§è´¨
 void outOpenList(std::vector<baseNode> &OpenList);
 
-//£¨×¢£ºÕâ¸ö¿ÉÒÔÓÃºÜ¶à·½·¨ÊµÏÖ£¬Ê¾Àı²¢·Ç×îÓÅ£©
+//ï¼ˆæ³¨ï¼šè¿™ä¸ªå¯ä»¥ç”¨å¾ˆå¤šæ–¹æ³•å®ç°ï¼Œç¤ºä¾‹å¹¶éæœ€ä¼˜ï¼‰
 void outOpenList2(baseNode &iter, std::vector<baseNode> &OpenList);
 
-//¶ÔÓÚÒ»Â·ÉÏµÄÃ¿¸öµã£¬·ÖÎöËüµÄ×î¶à°Ë¸öÁÚ¾Ó£¬²¢¼ÓÈëÁÚ¾ÓÁĞ±í
+//å¯¹äºä¸€è·¯ä¸Šçš„æ¯ä¸ªç‚¹ï¼Œåˆ†æå®ƒçš„æœ€å¤šå…«ä¸ªé‚»å±…ï¼Œå¹¶åŠ å…¥é‚»å±…åˆ—è¡¨
 void addNeibo(baseNode &iter, baseNode(&Neibo)[8], std::vector<std::vector<baseNode>> &AstarMap);
 
-//²é¿´ÁÙ½ü¸ñÊÇ·ñÔÚ¿ªÆôÁĞ±íÖĞµÄº¯Êı
+//æŸ¥çœ‹ä¸´è¿‘æ ¼æ˜¯å¦åœ¨å¼€å¯åˆ—è¡¨ä¸­çš„å‡½æ•°
 int isInOpenList(baseNode &neibo, std::vector<baseNode> &OpenList);
 
-//²é¿´Ö¸¶¨µÄtempÔÚ²»ÔÚ¹Ø±ÕÁĞ±íÖĞµÄº¯Êı£¬Ê¹ÓÃÁËÕÛ°ë²éÕÒ
+//æŸ¥çœ‹æŒ‡å®šçš„tempåœ¨ä¸åœ¨å…³é—­åˆ—è¡¨ä¸­çš„å‡½æ•°ï¼Œä½¿ç”¨äº†æŠ˜åŠæŸ¥æ‰¾
 int isInCloseList(baseNode &temp, std::vector<baseNode> &CloseList);
 
-//A*ÖĞµÄÆô·¢Ê½º¯Êı£¬ÓÃÓÚÇóÖ¸¶¨Î»ÖÃºÍÖÕµãÖ®¼äµÄÂü¹ş¶Ù¾àÀë
+//A*ä¸­çš„å¯å‘å¼å‡½æ•°ï¼Œç”¨äºæ±‚æŒ‡å®šä½ç½®å’Œç»ˆç‚¹ä¹‹é—´çš„æ›¼å“ˆé¡¿è·ç¦»
 int manhatten(int i, int j);
 
-//Çóµ±Ç°µãÓë¸¸Ç×½ÚµãµÄ¾àÀë
+//æ±‚å½“å‰ç‚¹ä¸çˆ¶äº²èŠ‚ç‚¹çš„è·ç¦»
 int increment(baseNode &nthis);
 
-//Çó³öÓÃµ±Ç°µã×÷Îª¸¸½ÚµãÊ±Õâ¸öµãµÄGÖµ
+//æ±‚å‡ºç”¨å½“å‰ç‚¹ä½œä¸ºçˆ¶èŠ‚ç‚¹æ—¶è¿™ä¸ªç‚¹çš„Gå€¼
 int NewG(baseNode &nthis, baseNode &father);
 
-//°ÑA*Ëã·¨µÄ½Úµã°´µ¹ĞòÕûÀíµ½AstackÀïÃæ
+//æŠŠA*ç®—æ³•çš„èŠ‚ç‚¹æŒ‰å€’åºæ•´ç†åˆ°Astacké‡Œé¢
 void arrange(baseNode &iter, std::vector<baseNode> &Astack, std::vector<std::vector<baseNode>> &AstarMap);
 
-//AstarµÄ±¾Ìå
+//Astarçš„æœ¬ä½“
 std::vector<std::vector<int>> AstarO(std::vector<baseNode> &Astack, baseNode(&Neibo)[8], std::vector<std::vector<baseNode>> &AstarMap, std::vector<baseNode> &OpenList, std::vector<baseNode> &CloseList);
 
 #endif
