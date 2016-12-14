@@ -1,32 +1,29 @@
 #include "Astar.h"
 
 using namespace std;
-USING_NS_CC;
 
-//ÓÃÓÚ¼ÇÂ¼¿ªÆôÁĞ±íÖĞÔªËØµÄ¸öÊı
+//ç”¨äºè®°å½•å¼€å¯åˆ—è¡¨ä¸­å…ƒç´ çš„ä¸ªæ•°
 int openListCount = 0;
 
-//ÓÃÓÚ¼ÇÂ¼¹Ø±ÕÁĞ±íÖĞÔªËØµÄ¸öÊı
+//ç”¨äºè®°å½•å…³é—­åˆ—è¡¨ä¸­å…ƒç´ çš„ä¸ªæ•°
 int closeListCount = 0;
 
-//ÓÃÓÚ¼ÇÂ¼ÁÚ¾ÓµÄ¸öÊı
+//ç”¨äºè®°å½•é‚»å±…çš„ä¸ªæ•°
 int neibNum = 0;
 
-//ÓÃÀ´¼ÇÂ¼Â·¾¶¾­¹ıµÄµãµÄ¸öÊı
+//ç”¨æ¥è®°å½•è·¯å¾„ç»è¿‡çš„ç‚¹çš„ä¸ªæ•°
 int AstackCount = 0;
 
-//ÓÃÓÚ¼ÇÂ¼¹Ø±ÕÁĞ±íÀïÊÇ·ñÓĞÖÕµã
+//ç”¨äºè®°å½•å…³é—­åˆ—è¡¨é‡Œæ˜¯å¦æœ‰ç»ˆç‚¹
 int FLAG = 0;
 
-int startPointx, startPointy, endPointx, endPointy, sizex, sizey;
+int startPointx=0, startPointy=0, endPointx=0, endPointy=0, sizex=0, sizey=0;
 
-//Sprite Matrix
-vector<vector<Sprite*>> SMatrix;
+//Render List
+extern vector<vector<int>> renderList;
 
-vector<vector<int>> Astar(int startPointX, int startPointY, int endPointX, int endPointY, const vector<vector<int>> &firstMap, vector<vector<Sprite*>> &Mat)
+vector<vector<int>> Astar(int startPointX, int startPointY, int endPointX, int endPointY, const vector<vector<int>> &firstMap)
 {
-	SMatrix = Mat;
-
 	auto be = firstMap.begin();
 
 	const int sizeX = firstMap.size();
@@ -34,16 +31,16 @@ vector<vector<int>> Astar(int startPointX, int startPointY, int endPointX, int e
 
 	vector<vector<baseNode>> AstarMap = inputMap(sizeX,sizeY,firstMap);
 
-	//¿ªÆôÁĞ±í£¬ÓÃÓÚA*Ëã·¨
+	//å¼€å¯åˆ—è¡¨ï¼Œç”¨äºA*ç®—æ³•
 	vector<baseNode> OpenList(sizeX*sizeY);
 
-	//¹Ø±ÕÁĞ±í£¬ÓÃÓÚA*Ëã·¨
+	//å…³é—­åˆ—è¡¨ï¼Œç”¨äºA*ç®—æ³•
 	vector<baseNode> CloseList(sizeX*sizeY);
 
-	//ÓÃÀ´´¢´æÕûÀíºóµÄÂ·¾¶
+	//ç”¨æ¥å‚¨å­˜æ•´ç†åçš„è·¯å¾„
 	vector<baseNode> Astack(sizeX*sizeY);
 
-	//ÁÚ¾Ó½Úµã
+	//é‚»å±…èŠ‚ç‚¹
 	baseNode Neibo[8];
 
 	startPointx = startPointX;
@@ -80,12 +77,17 @@ vector<vector<baseNode>> inputMap(int sizeX,int sizeY, const vector<vector<int>>
 	return AstarMap;
 }
 
-//ÒÔÏÂº¯Êı¶¼ÊÇA*Ëã·¨µÄÒ»²¿·Ö///////////////////////////
+//ä»¥ä¸‹å‡½æ•°éƒ½æ˜¯A*ç®—æ³•çš„ä¸€éƒ¨åˆ†///////////////////////////
 
-//°ÑÒ»¸öÔªËØ²åÈë¿ªÆôÁĞ±íÖĞ£¬Ê¹¿ªÆôÁĞ±í·ûºÏ×îĞ¡¶ş²æ¶ÑµÄĞÔÖÊ/////////
+//æŠŠä¸€ä¸ªå…ƒç´ æ’å…¥å¼€å¯åˆ—è¡¨ä¸­ï¼Œä½¿å¼€å¯åˆ—è¡¨ç¬¦åˆæœ€å°äºŒå‰å †çš„æ€§è´¨/////////
 void putInOpenList(baseNode &inList, vector<baseNode> &OpenList)
 {
-	SMatrix[13 - inList.i][inList.j]->setColor(Color3B(0xFF, 0x6E, 0xB4));
+	//Push Diamonds into Render List
+	vector<int> RenderTemp(3,0);
+	RenderTemp[0] = inList.i;
+	RenderTemp[1] = inList.j;
+	RenderTemp[2] = 1;
+	renderList.push_back(RenderTemp);
 
 	++openListCount;
 
@@ -104,16 +106,20 @@ void putInOpenList(baseNode &inList, vector<baseNode> &OpenList)
 	}
 }
 
-//È¡³ö¿ªÆôÁĞ±í£¨×îĞ¡¶ş²æ¶Ñ£©ÖĞ×îĞ¡µÄÊı
+//å–å‡ºå¼€å¯åˆ—è¡¨ï¼ˆæœ€å°äºŒå‰å †ï¼‰ä¸­æœ€å°çš„æ•°
 baseNode readTopOpenList(vector<baseNode> &OpenList)
 {
 	return OpenList[0];
 }
 
-//°ÑÒ»¸öÔªËØ¼ÓÈë¹Ø±ÕÁĞ±íÖĞ£¬Ê¹¹Ø±ÕÁĞ±íÓĞĞò
+//æŠŠä¸€ä¸ªå…ƒç´ åŠ å…¥å…³é—­åˆ—è¡¨ä¸­ï¼Œä½¿å…³é—­åˆ—è¡¨æœ‰åº
 void putInCloseList(baseNode &temp, vector<baseNode> &CloseList)
 {
-	SMatrix[13-temp.i][temp.j]->setColor(Color3B(0x7D, 0x26, 0xCD));
+	vector<int> RenderTemp(3, 0);
+	RenderTemp[0] = temp.i;
+	RenderTemp[1] = temp.j;
+	RenderTemp[2] = 2;
+	renderList.push_back(RenderTemp);
 
 	CloseList[closeListCount] = temp;
 
@@ -134,7 +140,7 @@ void putInCloseList(baseNode &temp, vector<baseNode> &CloseList)
 	++closeListCount;
 }
 
-//°Ñ¿ªÆôÁĞ±íÖĞµÄµ±Ç°½ÚµãÉ¾³ı£¬Ê¹Æä·ûºÏ×îĞ¡¶ş²æ¶ÑµÄĞÔÖÊ
+//æŠŠå¼€å¯åˆ—è¡¨ä¸­çš„å½“å‰èŠ‚ç‚¹åˆ é™¤ï¼Œä½¿å…¶ç¬¦åˆæœ€å°äºŒå‰å †çš„æ€§è´¨
 void outOpenList(vector<baseNode> &OpenList)
 {
 	--openListCount;
@@ -173,8 +179,8 @@ void outOpenList(vector<baseNode> &OpenList)
 	}
 }
 
-//É¾³ı¿ªÆôÁĞ±íÖĞÖ¸¶¨µÄÔªËØ£¬ÖØ¹¹×îĞ¡¶ş²æ¶Ñ
-//£¨×¢£ºÕâ¸ö¿ÉÒÔÓÃºÜ¶à·½·¨ÊµÏÖ£¬Ê¾Àı²¢·Ç×îÓÅ£©
+//åˆ é™¤å¼€å¯åˆ—è¡¨ä¸­æŒ‡å®šçš„å…ƒç´ ï¼Œé‡æ„æœ€å°äºŒå‰å †
+//ï¼ˆæ³¨ï¼šè¿™ä¸ªå¯ä»¥ç”¨å¾ˆå¤šæ–¹æ³•å®ç°ï¼Œç¤ºä¾‹å¹¶éæœ€ä¼˜ï¼‰
 void outOpenList2(baseNode &iter, vector<baseNode> &OpenList)
 {
 	int number = openListCount - 1;
@@ -195,7 +201,7 @@ void outOpenList2(baseNode &iter, vector<baseNode> &OpenList)
 	}
 }
 
-//¶ÔÓÚÒ»Â·ÉÏµÄÃ¿¸öµã£¬·ÖÎöËüµÄ×î¶à°Ë¸öÁÚ¾Ó£¬²¢¼ÓÈëÁÚ¾ÓÁĞ±í
+//å¯¹äºä¸€è·¯ä¸Šçš„æ¯ä¸ªç‚¹ï¼Œåˆ†æå®ƒçš„æœ€å¤šå…«ä¸ªé‚»å±…ï¼Œå¹¶åŠ å…¥é‚»å±…åˆ—è¡¨
 void addNeibo(baseNode &iter,baseNode (&Neibo)[8], vector<vector<baseNode>> &AstarMap)
 {
 	neibNum = 0;
@@ -221,7 +227,7 @@ void addNeibo(baseNode &iter,baseNode (&Neibo)[8], vector<vector<baseNode>> &Ast
 	}
 }
 
-//²é¿´ÁÙ½ü¸ñÊÇ·ñÔÚ¿ªÆôÁĞ±íÖĞµÄº¯Êı
+//æŸ¥çœ‹ä¸´è¿‘æ ¼æ˜¯å¦åœ¨å¼€å¯åˆ—è¡¨ä¸­çš„å‡½æ•°
 int isInOpenList(baseNode &neibo, vector<baseNode> &OpenList)
 {
 	for (int i = 0; i < openListCount - 1; ++i)
@@ -234,7 +240,7 @@ int isInOpenList(baseNode &neibo, vector<baseNode> &OpenList)
 	return 0;
 }
 
-//²é¿´Ö¸¶¨µÄtempÔÚ²»ÔÚ¹Ø±ÕÁĞ±íÖĞµÄº¯Êı£¬Ê¹ÓÃÁËÕÛ°ë²éÕÒ
+//æŸ¥çœ‹æŒ‡å®šçš„tempåœ¨ä¸åœ¨å…³é—­åˆ—è¡¨ä¸­çš„å‡½æ•°ï¼Œä½¿ç”¨äº†æŠ˜åŠæŸ¥æ‰¾
 int isInCloseList(baseNode &temp, vector<baseNode> &CloseList)
 {
 	int low = 0, high = closeListCount - 1, mid = (low + high) / 2;
@@ -257,7 +263,7 @@ int isInCloseList(baseNode &temp, vector<baseNode> &CloseList)
 	return 0;
 }
 
-//A*ÖĞµÄÆô·¢Ê½º¯Êı£¬ÓÃÓÚÇóÖ¸¶¨Î»ÖÃºÍÖÕµãÖ®¼äµÄÂü¹ş¶Ù¾àÀë
+//A*ä¸­çš„å¯å‘å¼å‡½æ•°ï¼Œç”¨äºæ±‚æŒ‡å®šä½ç½®å’Œç»ˆç‚¹ä¹‹é—´çš„æ›¼å“ˆé¡¿è·ç¦»
 int manhatten(int i, int j)
 {
 	int a = (abs(endPointx - i) + abs(endPointy - j));
@@ -269,7 +275,7 @@ int manhatten(int i, int j)
 	return a * 10;
 }
 
-//Çóµ±Ç°µãÓë¸¸Ç×½ÚµãµÄ¾àÀë
+//æ±‚å½“å‰ç‚¹ä¸çˆ¶äº²èŠ‚ç‚¹çš„è·ç¦»
 int increment(baseNode &nthis)
 {
 	if ((abs(nthis.father->i - nthis.i) == 1) && (abs(nthis.father->j - nthis.j) == 1))
@@ -286,7 +292,7 @@ int increment(baseNode &nthis)
 	}
 }
 
-//Çó³öÓÃµ±Ç°µã×÷Îª¸¸½ÚµãÊ±Õâ¸öµãµÄGÖµ
+//æ±‚å‡ºç”¨å½“å‰ç‚¹ä½œä¸ºçˆ¶èŠ‚ç‚¹æ—¶è¿™ä¸ªç‚¹çš„Gå€¼
 int NewG(baseNode &nthis, baseNode &father)
 {
 	if (abs(father.i - nthis.i) == 1 && abs(father.j - nthis.j) == 1)
@@ -303,75 +309,75 @@ int NewG(baseNode &nthis, baseNode &father)
 	}
 }
 
-//°ÑA*Ëã·¨µÄ½Úµã°´µ¹ĞòÕûÀíµ½AstackÀïÃæ
+//æŠŠA*ç®—æ³•çš„èŠ‚ç‚¹æŒ‰å€’åºæ•´ç†åˆ°Astacké‡Œé¢
 void arrange(baseNode &iter, vector<baseNode> &Astack, vector<vector<baseNode>> &AstarMap)
 {
 	AstackCount = 0;
-	for (; ; iter = AstarMap[iter.father->i][iter.father->j])
+	for (;iter.father!=nullptr ; iter = AstarMap[iter.father->i][iter.father->j])
 	{
 		Astack[AstackCount] = iter;
 		++AstackCount;
-		if (iter.i == startPointx&&iter.j == startPointy||iter.father==nullptr)
+		if (iter.i == startPointx&&iter.j == startPointy)
 		{
 			break;
 		}
 	}
 }
 
-//AstarµÄ±¾Ìå
+//Astarçš„æœ¬ä½“
 vector<vector<int>> AstarO(vector<baseNode> &Astack, baseNode(&Neibo)[8], vector<vector<baseNode>> &AstarMap, vector<baseNode> &OpenList, vector<baseNode> &CloseList)
 {
-	//FLAGÓÃÓÚÅĞ¶ÏÖÕµãÊÇ·ñÔÚ¹Ø±ÕÁĞ±í
+	//FLAGç”¨äºåˆ¤æ–­ç»ˆç‚¹æ˜¯å¦åœ¨å…³é—­åˆ—è¡¨
 	FLAG = 0;
-	//Ã¿´ÎÖ´ĞĞA*Ëã·¨£¬¶¼³õÊ¼»¯¿ªÆô/¹Ø±ÕÁĞ±í
+	//æ¯æ¬¡æ‰§è¡ŒA*ç®—æ³•ï¼Œéƒ½åˆå§‹åŒ–å¼€å¯/å…³é—­åˆ—è¡¨
 	openListCount = 0;
 	closeListCount = 0;
 
-	//´´½¨Ò»¸öµü´úÆ÷,Ã¿´Î¶¼µÈÓÚfÖµ×îĞ¡µÄ½Úµã
+	//åˆ›å»ºä¸€ä¸ªè¿­ä»£å™¨,æ¯æ¬¡éƒ½ç­‰äºfå€¼æœ€å°çš„èŠ‚ç‚¹
 	baseNode iter;
 
-	//ÈÃÕâ¸öµü´úÆ÷µÄ³õÖµÎªÆğµã
+	//è®©è¿™ä¸ªè¿­ä»£å™¨çš„åˆå€¼ä¸ºèµ·ç‚¹
 	iter.i = startPointx;
 	iter.j = startPointy;
 	iter.weigt = AstarMap[startPointx][startPointy].weigt;
 
-	//ÆğµãµÄÃ»ÓĞ¸¸½Úµã£¬ÇÒÎªÎ¨Ò»GÖµÎª0µÄµã
+	//èµ·ç‚¹çš„æ²¡æœ‰çˆ¶èŠ‚ç‚¹ï¼Œä¸”ä¸ºå”¯ä¸€Gå€¼ä¸º0çš„ç‚¹
 	iter.g = 0;
 	iter.h = manhatten(iter.i, iter.j);
 	iter.f = iter.g + iter.h;
 
-	//´´½¨ÖÕµã
+	//åˆ›å»ºç»ˆç‚¹
 	baseNode ender;
 
 	ender.i = endPointx;
 	ender.j = endPointy;
 
-	//°ÑÆğµã·ÅÈë¿ªÆôÁĞ±í
+	//æŠŠèµ·ç‚¹æ”¾å…¥å¼€å¯åˆ—è¡¨
 	putInOpenList(iter,OpenList);
 
-	//µ±¿ªÆôÁĞ±íÎª¿Õ»òÕßÖÕµãÔÚ¹Ø±ÕÁĞ±íÖĞ£¬½áÊøÑ°¾¶
+	//å½“å¼€å¯åˆ—è¡¨ä¸ºç©ºæˆ–è€…ç»ˆç‚¹åœ¨å…³é—­åˆ—è¡¨ä¸­ï¼Œç»“æŸå¯»å¾„
 	for (; openListCount != 0 && FLAG == 0;)
 	{
-		//È¡³ö¿ªÆôÁĞ±íÖĞfÖµ×îĞ¡µÄ½Úµã£¨Ö®Ò»£©£¬²¢ÉèÎªiter£¨µ±Ç°µã£©
+		//å–å‡ºå¼€å¯åˆ—è¡¨ä¸­få€¼æœ€å°çš„èŠ‚ç‚¹ï¼ˆä¹‹ä¸€ï¼‰ï¼Œå¹¶è®¾ä¸ºiterï¼ˆå½“å‰ç‚¹ï¼‰
 		iter = readTopOpenList(OpenList);
 
-		//°Ñ×îĞ¡µã´Ó¿ªÆôÁĞ±íÖĞÉ¾³ı
+		//æŠŠæœ€å°ç‚¹ä»å¼€å¯åˆ—è¡¨ä¸­åˆ é™¤
 		outOpenList(OpenList);
 
-		//°Ñµ±Ç°µã¼ÇÂ¼ÔÚ¹Ø±ÕÁĞ±íÖĞ
+		//æŠŠå½“å‰ç‚¹è®°å½•åœ¨å…³é—­åˆ—è¡¨ä¸­
 		putInCloseList(iter,CloseList);
 
-		//°Ñµ±Ç°µãµÄÁÚ¾Ó¼ÓÈëÁÚ¾ÓÁĞ±í
+		//æŠŠå½“å‰ç‚¹çš„é‚»å±…åŠ å…¥é‚»å±…åˆ—è¡¨
 		addNeibo(iter,Neibo, AstarMap);
 
-		//¶ÔÓÚÃ¿¸öÁÚ¾Ó£¬·ÖÈıÖÖÇé¿ö½øĞĞ²Ù×÷
+		//å¯¹äºæ¯ä¸ªé‚»å±…ï¼Œåˆ†ä¸‰ç§æƒ…å†µè¿›è¡Œæ“ä½œ
 		for (int i = 0; i < neibNum; ++i)
 		{
-			//Èç¹ûÕâ¸öÁÚ¾Ó½Úµã²»¿ÉÍ¨¹ı£¬»òÕßÕâ¸öÁÚ¾Ó½ÚµãÔÚ¹Ø±ÕÁĞ±íÖĞ£¬ÂÔ¹ıËü
+			//å¦‚æœè¿™ä¸ªé‚»å±…èŠ‚ç‚¹ä¸å¯é€šè¿‡ï¼Œæˆ–è€…è¿™ä¸ªé‚»å±…èŠ‚ç‚¹åœ¨å…³é—­åˆ—è¡¨ä¸­ï¼Œç•¥è¿‡å®ƒ
 			if (Neibo[i].weigt == 0 || isInCloseList(Neibo[i],CloseList))
 			{
 			}
-			//Èç¹ûÕâ¸öÁÚ¾Ó½ÚµãÒÑ¾­ÔÚ¿ªÆôÁĞ±íÖĞ
+			//å¦‚æœè¿™ä¸ªé‚»å±…èŠ‚ç‚¹å·²ç»åœ¨å¼€å¯åˆ—è¡¨ä¸­
 			else if (isInOpenList(Neibo[i],OpenList))
 			{
 				if (NewG(Neibo[i], iter)<Neibo[i].g)
@@ -384,7 +390,7 @@ vector<vector<int>> AstarO(vector<baseNode> &Astack, baseNode(&Neibo)[8], vector
 					putInOpenList(Neibo[i],OpenList);
 				}
 			}
-			//Èç¹ûÕâ¸öÁÚ¾Ó½Úµã²»ÔÚ¿ªÆôÁĞ±íÖĞ
+			//å¦‚æœè¿™ä¸ªé‚»å±…èŠ‚ç‚¹ä¸åœ¨å¼€å¯åˆ—è¡¨ä¸­
 			else
 			{
 				AstarMap[Neibo[i].i][Neibo[i].j].father = Neibo[i].father = &AstarMap[iter.i][iter.j];
@@ -411,6 +417,5 @@ vector<vector<int>> AstarO(vector<baseNode> &Astack, baseNode(&Neibo)[8], vector
 		finalMat.push_back(t2);
 	}
 
-	SMatrix.clear();
 	return finalMat;
 }
