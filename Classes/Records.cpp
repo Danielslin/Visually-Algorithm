@@ -15,8 +15,11 @@ bool haveSound = true;
 //Astar Map
 vector<vector<int>> AstarMap;
 
-//起点、终点坐标
+//Origins and End Points
 int startPointX = 0;
 int startPointY = 0;
 int endPointX = 0;
 int endPointY = 0;
+
+//Render List
+vector<vector<int>> renderList;
