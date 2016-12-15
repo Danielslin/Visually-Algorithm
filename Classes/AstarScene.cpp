@@ -111,6 +111,12 @@ void AstarScene::menuCallback(Ref *sender)
 		selector->setEnabled(false);
 		vector<vector<int>> FinalMatrix = Astar(startPointColumn, startPointLine, endPointColumn, endPointLine, aStarMap);
 
+		//Add Origin
+		vector<int> t(3, 0);
+		t[0] = startPointLine;
+		t[1] = startPointColumn;
+		t[2] = 3;
+		renderList.push_back(t);
 		//Final Matrix Tintage
 		for (auto &NodeOfRoad:FinalMatrix)
 		{
