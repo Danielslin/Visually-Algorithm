@@ -49,7 +49,7 @@ vector<vector<int>> Astar(int startPointColumn, int startPointLine, int endPoint
 	auto Result = AstarKernel();
 
 	Astack.clear(); OpenList.clear(); CloseList.clear(); AstarMap.clear();
-	MapSizeW = 0; MapSizeH = 0; startCol = 0, startLine = 0, endCol = 0, endLine = 0;
+	MapSizeW = 0; MapSizeH = 0; startCol = 0, startLine = 0, endCol = 0, endLine = 0;FLAG = false;
 
 	for (int i=0;i<8;++i){ Neibo[i].Clear(); }
 
