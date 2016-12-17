@@ -82,7 +82,7 @@ bool AstarScene::init()
 	}
 
 	//Initialize Menu
-	auto runButton = MenuItemImage::create("IMG/Map/NextButton.png", "IMG/Map/NextButtonPushed.png","IMG/Map/NextButtonUsed.png", CC_CALLBACK_1(AstarScene::menuCallback, this));
+	auto runButton = MenuItemImage::create("IMG/Map/NextButton.png", "IMG/Map/NextButtonPushed.png", CC_CALLBACK_1(AstarScene::menuCallback, this));
 	auto backButton = MenuItemImage::create("IMG/MainScene/endButton.png", "IMG/MainScene/endButtonPushed.png", CC_CALLBACK_1(AstarScene::menuCallback, this));
 
 	runButton->setTag(0);
@@ -108,6 +108,7 @@ void AstarScene::menuCallback(Ref *sender)
 	{
 	case 0:
 	{
+		selector->setVisible(false);
 		selector->setEnabled(false);
 		vector<vector<int>> FinalMatrix = Astar(startPointColumn, startPointLine, endPointColumn, endPointLine, aStarMap);
 
