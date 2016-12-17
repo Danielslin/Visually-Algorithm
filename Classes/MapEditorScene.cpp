@@ -79,8 +79,8 @@ bool MapEditorScene::init()
 	auto WallSelectButton = MenuItemImage::create("IMG/Map/WallSelectButton.png", "IMG/Map/WallSelectButtonPushed.png", "IMG/Map/WallSelectButtonUsed.png",CC_CALLBACK_1(MapEditorScene::menuCallback, this));
 	auto OriginSelectButton = MenuItemImage::create("IMG/Map/OriginSelectButton.png", "IMG/Map/OriginSelectButtonPushed.png", "IMG/Map/OriginSelectButtonUsed.png",CC_CALLBACK_1(MapEditorScene::menuCallback, this));
 	auto EndPointSelectButton = MenuItemImage::create("IMG/Map/EndPointSelectButton.png", "IMG/Map/EndPointSelectButtonPushed.png", "IMG/Map/EndPointSelectButtonUsed.png",CC_CALLBACK_1(MapEditorScene::menuCallback, this));
-	auto NextButton = MenuItemImage::create("IMG/Map/NextButton.png", "IMG/Map/NextButtonPushed.png","IMG/Map/NextButtonUsed.png", CC_CALLBACK_1(MapEditorScene::menuCallback, this));
-	auto BackButton = MenuItemImage::create("IMG/Map/BackButton.png", "IMG/Map/BackButtonPushed.png","IMG/Map/BackButtonUsed.png", CC_CALLBACK_1(MapEditorScene::menuCallback, this));
+	auto NextButton = MenuItemImage::create("IMG/Map/NextButton.png", "IMG/Map/NextButtonPushed.png", CC_CALLBACK_1(MapEditorScene::menuCallback, this));
+	auto BackButton = MenuItemImage::create("IMG/Map/BackButton.png", "IMG/Map/BackButtonPushed.png", CC_CALLBACK_1(MapEditorScene::menuCallback, this));
 
 	MSIP[0] = WallSelectButton;
 	MSIP[1] = OriginSelectButton;
